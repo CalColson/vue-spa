@@ -8,6 +8,7 @@ const indexHTML = (() => {
 })()
 
 app.use('/dist', express.static(path.resolve(__dirname, './dist')))
+app.use('/node_modules/bulma', express.static(path.resolve(__dirname, './node_modules/bulma')))
 
 require('./build/dev-server')(app)
 

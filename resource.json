@@ -1,0 +1,8 @@
+{
+  "css": {
+    "style": [
+      "/node_modules/bulma/css",
+      "/src/scss"
+    ]
+  }
+}
