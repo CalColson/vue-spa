@@ -2,8 +2,6 @@
   <div class="content">
     <div v-if="isAuthenticated">
       <h1>Hello you're checked in... and I'm checking you out ;)</h1>
-      <p>Name: {{profile.firstName}}</p>
-      <p>Favorite Sandwich: {{profile.favoriteSandwich}}</p>
       <button @click="logout" class="button is-primary">Run Away!!!</button>
     </div>
     <div v-else>
@@ -48,51 +46,27 @@
   </div>
 </template>
 <script>
-import appService from '../app.service.js'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
       username: '',
-      password: '',
-      profile: {},
-      isAuthenticated: false
+      password: ''
     }
   },
-  watch: {
-    isAuthenticated: function (val) {
-      if (val) {
-        appService.getProfile()
-          .then(profile => {
-            this.profile = profile
-          })
-      } else {
-        this.profile = {}
-      }
-    }
+  computed: {
+    ...mapGetters(['isAuthenticated'])
   },
   methods: {
+    ...mapActions({
+      logout: 'logout'
+    }),
     login () {
-      appService.login({username: this.username, password: this.password})
-        .then((data) => {
-          window.localStorage.setItem('token', data.token)
-          window.localStorage.setItem('tokenExpiration', data.expiration)
-          this.isAuthenticated = true
+      this.$store.dispatch('login', {username: this.username, password: this.password})
+        .then(() => {
           this.username = ''
           this.password = ''
         })
-        .catch(() => window.alert('Your puny login attempt failed... hmmph'))
-    },
-    logout () {
-      window.localStorage.setItem('token', null)
-      window.localStorage.setItem('tokenExpiration', null)
-      this.isAuthenticated = false
-    }
-  },
-  created () {
-    let expiration = window.localStorage.getItem('tokenExpiration')
-    var unixTimeStamp = new Date().getTime() / 1000
-    if (expiration !== null && parseInt(expiration) - unixTimeStamp > 0) {
-      this.isAuthenticated = true
     }
   }
 }
